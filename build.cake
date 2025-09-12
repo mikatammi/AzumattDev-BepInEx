@@ -164,6 +164,7 @@ Task("MakeDist")
     PackageBepin("linux", "x64", "libdoorstop.so", "run_bepinex.sh", true);
     PackageBepin("linux", "x86", "libdoorstop.so", "run_bepinex.sh", true);
     PackageBepin("macos", "x64", "libdoorstop.dylib", "run_bepinex.sh", true);
+    PackageBepin("macos", "arm64", "libdoorstop.dylib", "run_bepinex.sh", true);
     CopyFileToDirectory(File("./bin/patcher/BepInEx.Patcher.exe"), distPatcherDir);
 });
 
@@ -180,6 +181,7 @@ Task("Pack")
     ZipCompress(distDir + Directory("linux_x86"), distDir + File($"BepInEx_linux_x86{commitPrefix}{buildVersion}.zip"));
     ZipCompress(distDir + Directory("linux_x64"), distDir + File($"BepInEx_linux_x64{commitPrefix}{buildVersion}.zip"));
     ZipCompress(distDir + Directory("macos_x64"), distDir + File($"BepInEx_macos_x64{commitPrefix}{buildVersion}.zip"));
+    ZipCompress(distDir + Directory("macos_arm64"), distDir + File($"BepInEx_macos_arm64{commitPrefix}{buildVersion}.zip"));
 
     Information("Packing BepInEx.Patcher");
     ZipCompress(distDir + Directory("patcher"), distDir + File($"BepInEx_Patcher{commitPrefix}{buildVersion}.zip"));

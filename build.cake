@@ -106,9 +106,9 @@ Task("DownloadDoorstop")
     var doorstopMacPath = doorstopPath + File("doorstop_macos.zip");
     CreateDirectory(doorstopPath);
 
-    DownloadFile($"https://github.com/NeighTools/UnityDoorstop/releases/download/v{DOORSTOP_VER}/doorstop_win_release_{DOORSTOP_VER}.zip", doorstopWinPath);
-    DownloadFile($"https://github.com/NeighTools/UnityDoorstop/releases/download/v{DOORSTOP_VER}/doorstop_linux_release_{DOORSTOP_VER}.zip", doorstopLinuxPath);
-    DownloadFile($"https://github.com/NeighTools/UnityDoorstop/releases/download/v{DOORSTOP_VER}/doorstop_macos_release_{DOORSTOP_VER}.zip", doorstopMacPath);
+    DownloadFile($"https://github.com/NeighTools/UnityDoorstop/releases/download/ci/doorstop_win_release_{DOORSTOP_VER}.zip", doorstopWinPath);
+    DownloadFile($"https://github.com/NeighTools/UnityDoorstop/releases/download/ci/doorstop_linux_release_{DOORSTOP_VER}.zip", doorstopLinuxPath);
+    DownloadFile($"https://github.com/NeighTools/UnityDoorstop/releases/download/ci/doorstop_macos_release_{DOORSTOP_VER}.zip", doorstopMacPath);
 
     Information("Extracting Doorstop");
     ZipUncompress(doorstopWinPath, doorstopPath + Directory("win"));
@@ -140,6 +140,14 @@ Task("MakeDist")
         var bepinDir = distArchDir + Directory("BepInEx");
         var doorstopTargetDir = distArchDir;
         var doorstopOsArchDir = doorstopPath + Directory(os) + Directory(arch);
+
+        // If specific arch dir doesn't exist (macOS may provide a 'universal' build), fallback to 'universal'
+        if(!DirectoryExists(doorstopOsArchDir)) {
+            var universalDir = doorstopPath + Directory(os) + Directory("universal");
+            if(DirectoryExists(universalDir)) {
+                doorstopOsArchDir = universalDir;
+            }
+        }
 
         var doorstopFiles = doorstopOsArchDir + File(copyPattern);
         var doorstopVersionFiles = doorstopOsArchDir + File(".doorstop_version");

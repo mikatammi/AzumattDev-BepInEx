@@ -32,3 +32,7 @@ Unity plugin framework
 - [essu](https://github.com/exdownloader) - Project logo, moral support and lots of misc. help
 - [denikson](https://github.com/denikson) - [UnityDoorstop](https://github.com/NeighTools/UnityDoorstop) for the patchless loader
 - [nn@](https://twitter.com/NnAone2cmg) - Japanese translation of the wiki
+
+## How to build
+
+`nix-shell -p git dotnet-sdk --run "./build.sh --target=Pack"`

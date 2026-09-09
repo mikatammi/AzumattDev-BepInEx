@@ -4,7 +4,7 @@
 #addin nuget:?package=Cake.Json&version=7.0.1
 #addin nuget:?package=Newtonsoft.Json&version=13.0.3
 
-const string DOORSTOP_VER = "4.4.1";
+const string DOORSTOP_VER = "4.5.0";
 
 var target = Argument("target", "Build");
 var isBleedingEdge = Argument("bleeding_edge", false);
@@ -106,9 +106,9 @@ Task("DownloadDoorstop")
     var doorstopMacPath = doorstopPath + File("doorstop_macos.zip");
     CreateDirectory(doorstopPath);
 
-    DownloadFile($"https://github.com/NeighTools/UnityDoorstop/releases/download/ci/doorstop_win_release_{DOORSTOP_VER}.zip", doorstopWinPath);
-    DownloadFile($"https://github.com/NeighTools/UnityDoorstop/releases/download/ci/doorstop_linux_release_{DOORSTOP_VER}.zip", doorstopLinuxPath);
-    DownloadFile($"https://github.com/NeighTools/UnityDoorstop/releases/download/ci/doorstop_macos_release_{DOORSTOP_VER}.zip", doorstopMacPath);
+    DownloadFile($"https://github.com/NeighTools/UnityDoorstop/releases/download/v{DOORSTOP_VER}/doorstop_win_release_{DOORSTOP_VER}.zip", doorstopWinPath);
+    DownloadFile($"https://github.com/NeighTools/UnityDoorstop/releases/download/v{DOORSTOP_VER}/doorstop_linux_release_{DOORSTOP_VER}.zip", doorstopLinuxPath);
+    DownloadFile($"https://github.com/NeighTools/UnityDoorstop/releases/download/v{DOORSTOP_VER}/doorstop_macos_release_{DOORSTOP_VER}.zip", doorstopMacPath);
 
     Information("Extracting Doorstop");
     ZipUncompress(doorstopWinPath, doorstopPath + Directory("win"));
@@ -141,14 +141,6 @@ Task("MakeDist")
         var doorstopTargetDir = distArchDir;
         var doorstopOsArchDir = doorstopPath + Directory(os) + Directory(arch);
 
-        // If specific arch dir doesn't exist (macOS may provide a 'universal' build), fallback to 'universal'
-        if(!DirectoryExists(doorstopOsArchDir)) {
-            var universalDir = doorstopPath + Directory(os) + Directory("universal");
-            if(DirectoryExists(universalDir)) {
-                doorstopOsArchDir = universalDir;
-            }
-        }
-
         var doorstopFiles = doorstopOsArchDir + File(copyPattern);
         var doorstopVersionFiles = doorstopOsArchDir + File(".doorstop_version");
 
@@ -171,8 +163,7 @@ Task("MakeDist")
     PackageBepin("win", "x86", "winhttp.dll", "doorstop_config.ini");
     PackageBepin("linux", "x64", "libdoorstop.so", "run_bepinex.sh", true);
     PackageBepin("linux", "x86", "libdoorstop.so", "run_bepinex.sh", true);
-    PackageBepin("macos", "x64", "libdoorstop.dylib", "run_bepinex.sh", true);
-    PackageBepin("macos", "arm64", "libdoorstop.dylib", "run_bepinex.sh", true);
+    PackageBepin("macos", "universal", "libdoorstop.dylib", "run_bepinex.sh", true);
     CopyFileToDirectory(File("./bin/patcher/BepInEx.Patcher.exe"), distPatcherDir);
 });
 
@@ -188,8 +179,7 @@ Task("Pack")
     ZipCompress(distDir + Directory("win_x64"), distDir + File($"BepInEx_win_x64{commitPrefix}{buildVersion}.zip"));
     ZipCompress(distDir + Directory("linux_x86"), distDir + File($"BepInEx_linux_x86{commitPrefix}{buildVersion}.zip"));
     ZipCompress(distDir + Directory("linux_x64"), distDir + File($"BepInEx_linux_x64{commitPrefix}{buildVersion}.zip"));
-    ZipCompress(distDir + Directory("macos_x64"), distDir + File($"BepInEx_macos_x64{commitPrefix}{buildVersion}.zip"));
-    ZipCompress(distDir + Directory("macos_arm64"), distDir + File($"BepInEx_macos_arm64{commitPrefix}{buildVersion}.zip"));
+    ZipCompress(distDir + Directory("macos_universal"), distDir + File($"BepInEx_macos_universal{commitPrefix}{buildVersion}.zip"));
 
     Information("Packing BepInEx.Patcher");
     ZipCompress(distDir + Directory("patcher"), distDir + File($"BepInEx_Patcher{commitPrefix}{buildVersion}.zip"));

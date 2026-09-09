@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Text;
@@ -34,11 +34,17 @@ namespace BepInEx.Logging
 				
 				try
 				{
+					// public wrapper first, private impl as backup (Unity 6 dropped the internal calls we used to target)
 					var writeMethod = realUnityLogWriter.GetMethod("WriteStringToUnityLog",
 						BindingFlags.Static | BindingFlags.Public,
 						null,
 						new[] { typeof(string) },
-						null);
+						null)
+						?? realUnityLogWriter.GetMethod("WriteStringToUnityLogImpl",
+							BindingFlags.Static | BindingFlags.NonPublic,
+							null,
+							new[] { typeof(string) },
+							null);
 
 					if (writeMethod != null)
 					{

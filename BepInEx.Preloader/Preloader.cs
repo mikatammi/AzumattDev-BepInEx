@@ -25,7 +25,7 @@ namespace BepInEx.Preloader
 		///     The log writer that is specific to the preloader.
 		/// </summary>
 		private static PreloaderConsoleListener PreloaderLog { get; set; }
-		private static string tsVersion = "5.4.2333";
+		private static string tsVersion = "5.4.2350";
 
 		public static bool IsPostUnity2017 { get; } = File.Exists(Path.Combine(Paths.ManagedPath, "UnityEngine.CoreModule.dll"));
 
@@ -74,6 +74,12 @@ namespace BepInEx.Preloader
 				Logger.LogInfo($"CLR runtime version: {Environment.Version}");
 				Logger.LogInfo($"Supports SRE: {Utility.CLRSupportsDynamicAssemblies}");
 				Logger.LogInfo($"System platform: {PlatformDetection.OS} {PlatformDetection.Architecture}");
+
+				if (PreloaderRunner.XTermFixException != null)
+					Logger.LogWarning($"Failed to apply XTermFix runtime patch. See more info in the output log. Error message: {PreloaderRunner.XTermFixException.Message}");
+
+				if (PreloaderRunner.ConsoleSetOutFixException != null)
+					Logger.LogWarning($"Failed to apply ConsoleSetOutFix runtime patch. See more info in the output log. Error message: {PreloaderRunner.ConsoleSetOutFixException.Message}");
 
 				if (runtimePatchException != null)
 					Logger.LogWarning($"Failed to apply runtime patches for Mono. See more info in the output log. Error message: {runtimePatchException.Message}");

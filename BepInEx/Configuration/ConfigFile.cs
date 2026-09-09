@@ -45,7 +45,7 @@ namespace BepInEx.Configuration
 		/// If you want to access and modify an existing setting then use <see cref="AddSetting{T}(ConfigDefinition,T,ConfigDescription)"/> 
 		/// instead with no description.
 		/// </summary>
-		[Obsolete("Use Values instead")]
+		[Obsolete("Use ((IDictionary<ConfigDefinition, ConfigEntryBase>)configFile).Values instead")]
 		public ConfigEntryBase[] GetConfigEntries()
 		{
 			lock (_ioLock)
@@ -153,7 +153,7 @@ namespace BepInEx.Configuration
 				{
 					if (_ownerMetadata != null)
 					{
-						writer.WriteLine($"## Settings file was created by plugin {_ownerMetadata.Name} v{_ownerMetadata.Version}");
+						writer.WriteLine($"## Settings file was created by plugin {_ownerMetadata.Name} v{_ownerMetadata.Version}{_ownerMetadata.VersionExtra}");
 						writer.WriteLine($"## Plugin GUID: {_ownerMetadata.GUID}");
 						writer.WriteLine();
 					}
